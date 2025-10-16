@@ -1,4 +1,4 @@
-"""Configuration loader for the automation toolkit."""
+"""Bộ nạp cấu hình cho bộ công cụ tự động hóa."""
 from __future__ import annotations
 
 import json

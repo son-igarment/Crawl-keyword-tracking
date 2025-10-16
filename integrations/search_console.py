@@ -1,4 +1,4 @@
-"""Mocked Google Search Console client used for local testing."""
+"""Client Google Search Console giả lập dùng cho kiểm thử cục bộ."""
 from __future__ import annotations
 
 import hashlib
@@ -8,7 +8,7 @@ from typing import Dict, List
 
 
 class SearchConsoleClient:
-    """Utility class that simulates Search Console responses."""
+    """Lớp tiện ích mô phỏng phản hồi của Search Console."""
 
     def __init__(self, site_url: str, keyword_dataset: Dict[str, Dict[str, float]] | None = None) -> None:
         self.site_url = site_url

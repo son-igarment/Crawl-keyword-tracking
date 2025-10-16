@@ -1,4 +1,4 @@
-"""Automated keyword crawler with rate control and pause/resume capabilities."""
+"""Trình thu thập (crawler) từ khóa tự động với kiểm soát tốc độ và khả năng tạm dừng/tiếp tục."""
 from __future__ import annotations
 
 import time
@@ -12,7 +12,7 @@ from storage.database import Database, KeywordRanking
 
 
 class CrawlerController:
-    """Controls crawl pacing and provides pause/resume mechanics."""
+    """Điều khiển tốc độ thu thập và cung cấp cơ chế tạm dừng/tiếp tục."""
 
     def __init__(self, rate_limit_per_minute: int = 60) -> None:
         self.rate_limit_per_minute = max(1, rate_limit_per_minute)
@@ -40,13 +40,13 @@ class CrawlerController:
                 while self._paused:
                     self._condition.wait()
                 now = time.time()
-                # Remove timestamps older than a minute
+                # Xóa các dấu thời gian cũ hơn một phút
                 while self._timestamps and now - self._timestamps[0] >= 60:
                     self._timestamps.popleft()
                 if len(self._timestamps) < self.rate_limit_per_minute:
                     self._timestamps.append(now)
                     return
-                # Need to wait for the earliest timestamp to expire
+                # Cần chờ đến khi dấu thời gian sớm nhất hết hạn
                 wait_time = 60 - (now - self._timestamps[0])
                 if wait_time > 0:
                     self._condition.wait(timeout=wait_time)

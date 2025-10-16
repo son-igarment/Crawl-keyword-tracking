@@ -1,4 +1,4 @@
-"""Simplified Google authentication helper for local development."""
+"""Trình trợ giúp xác thực Google đơn giản cho phát triển cục bộ."""
 from __future__ import annotations
 
 from dataclasses import dataclass

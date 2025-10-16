@@ -1,4 +1,4 @@
-"""Demonstration script for the Crawl Keyword Tracking Toolkit."""
+"""Tập lệnh minh họa cho bộ công cụ Crawl Keyword Tracking."""
 from __future__ import annotations
 
 from datetime import date, datetime, timedelta
@@ -13,11 +13,11 @@ from integrations.ga4 import GA4Client
 
 
 def run_demo() -> None:
-    """Execute crawler, scheduler, and reporting flows with printed output."""
+    """Thực thi luồng crawler, lập lịch và báo cáo với đầu ra in ra màn hình."""
     settings = Settings.load()
     database = Database()
 
-    # --- Crawler demo -------------------------------------------------------
+    # --- Bản demo Crawler -------------------------------------------------------
     search_console = SearchConsoleClient(settings.search_console["site_url"])
     controller = CrawlerController(rate_limit_per_minute=settings.crawler["rate_limit_per_minute"])
     crawler = KeywordCrawler(search_console, database, controller)
@@ -37,7 +37,7 @@ def run_demo() -> None:
             f"{ranking.fetched_at} - {ranking.keyword} -> {ranking.position} ({ranking.clicks}/{ranking.impressions})"
         )
 
-    # --- Scheduler demo ----------------------------------------------------
+    # --- Bản demo Bộ lập lịch ----------------------------------------------------
     scheduler = ContentScheduler(database)
     now = datetime.utcnow()
     print("\n== Scheduling content ==")
@@ -54,7 +54,7 @@ def run_demo() -> None:
     for post in pending:
         print(f"- {post.title} scheduled at {post.publish_at}")
 
-    # --- Reporting demo ----------------------------------------------------
+    # --- Bản demo Báo cáo ----------------------------------------------------
     ga_client = GA4Client(settings.ga4["property_id"])
     reporting = ReportingPipeline(ga_client, search_console, database)
     start = date.today() - timedelta(days=6)

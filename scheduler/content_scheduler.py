@@ -1,4 +1,4 @@
-"""Content scheduling utilities for tracking publication pipelines."""
+"""Tiện ích lập lịch nội dung để theo dõi quy trình xuất bản."""
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -18,7 +18,7 @@ class ScheduledPost:
 
 
 class ContentScheduler:
-    """Manages content lifecycle from planning to publishing."""
+    """Quản lý vòng đời nội dung từ lập kế hoạch đến xuất bản."""
 
     def __init__(self, database: Database) -> None:
         self.database = database

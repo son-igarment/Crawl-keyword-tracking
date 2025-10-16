@@ -35,13 +35,13 @@ Configuration defaults are stored in `config/settings.py`. Provide a JSON overri
 ## Repository Structure
 
 ```
-config/           # Configuration loader and defaults
-crawler/          # Keyword crawler implementation
-scheduler/        # Content scheduler service
-reporting/        # Traffic reporting pipeline
-integrations/     # Mock integrations for Google APIs
-storage/          # SQLite persistence layer
-tests/            # Automated test suite
+config/           # Trình tải cấu hình và giá trị mặc định
+crawler/          # Triển khai crawler từ khóa
+scheduler/        # Dịch vụ lập lịch nội dung
+reporting/        # Pipeline báo cáo lưu lượng
+integrations/     # Tích hợp giả lập cho các API của Google
+storage/          # Lớp lưu trữ SQLite
+tests/            # Bộ kiểm thử tự động
 ```
 
 ## Running the Toolkit

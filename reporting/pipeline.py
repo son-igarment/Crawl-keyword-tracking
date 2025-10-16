@@ -1,4 +1,4 @@
-"""Reporting pipeline aggregating traffic and query metrics."""
+"""Pipeline báo cáo tổng hợp lưu lượng và số liệu truy vấn."""
 from __future__ import annotations
 
 from dataclasses import dataclass

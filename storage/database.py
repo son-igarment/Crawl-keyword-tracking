@@ -1,4 +1,4 @@
-"""Lightweight SQLite-backed persistence layer for crawler, scheduler, and reporting data."""
+"""Lớp lưu trữ nhẹ dựa trên SQLite cho dữ liệu của crawler, bộ lập lịch và báo cáo."""
 from __future__ import annotations
 
 import sqlite3
@@ -105,7 +105,7 @@ class Database:
                 """
             )
 
-    # Keyword ranking operations -------------------------------------------------
+    # Các thao tác xếp hạng từ khóa -------------------------------------------------
     def upsert_keyword_ranking(self, ranking: KeywordRanking) -> None:
         with self.cursor() as cur:
             cur.execute(
@@ -129,7 +129,7 @@ class Database:
             rows = cur.fetchall()
         return [KeywordRanking(**dict(row)) for row in rows]
 
-    # Content scheduler operations ----------------------------------------------
+    # Các thao tác bộ lập lịch nội dung ----------------------------------------------
     def add_content(self, title: str, author: str, publish_at: str, status: str) -> int:
         with self.cursor() as cur:
             cur.execute(
@@ -173,7 +173,7 @@ class Database:
             rows = cur.fetchall()
         return [ScheduledContent(**dict(row)) for row in rows]
 
-    # Reporting operations ------------------------------------------------------
+    # Các thao tác báo cáo ------------------------------------------------------
     def insert_report(self, report: Dict[str, object]) -> int:
         with self.cursor() as cur:
             cur.execute(

@@ -1,4 +1,4 @@
-"""Mocked Google Analytics 4 client."""
+"""Client Google Analytics 4 giả lập."""
 from __future__ import annotations
 
 import hashlib
