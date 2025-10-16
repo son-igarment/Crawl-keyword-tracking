@@ -1,41 +1,41 @@
-# Crawl Keyword Tracking Toolkit
+# Bộ Công Cụ Theo Dõi Thứ Hạng Từ Khóa
 
-This project provides a self-contained toolkit for:
+Dự án này cung cấp một bộ công cụ tự chứa để:
 
-- Crawling keyword ranking and SEO metrics with configurable rate limiting and pause/resume controls.
-- Scheduling and tracking content publication plans.
-- Aggregating Search Console and GA4 style metrics into traffic reports.
-- Demonstrating the full workflow via an executable demo script.
+- Thu thập (crawl) thứ hạng từ khóa và số liệu SEO với giới hạn tốc độ có thể cấu hình cùng khả năng tạm dừng/tiếp tục.
+- Lên lịch và theo dõi kế hoạch xuất bản nội dung.
+- Tổng hợp số liệu kiểu Search Console và GA4 thành các báo cáo lưu lượng.
+- Minh họa toàn bộ quy trình thông qua một script demo có thể chạy.
 
-All integrations are implemented with lightweight, deterministic mocks so the system can be tested locally without external credentials. A SQLite-backed persistence layer keeps track of rankings, schedules, and generated reports.
+Tất cả tích hợp được hiện thực bằng mock nhẹ, có tính xác định, cho phép kiểm thử cục bộ mà không cần thông tin xác thực bên ngoài. Lớp lưu trữ dựa trên SQLite dùng để theo dõi thứ hạng, lịch nội dung và các báo cáo được tạo.
 
-## Getting Started
+## Bắt Đầu
 
-1. **Install dependencies** (only the Python standard library is used).
-2. **Run the automated tests:**
+1. Cài đặt phụ thuộc (chỉ sử dụng thư viện chuẩn của Python).
+2. Chạy bộ kiểm thử tự động:
 
    ```bash
    pytest
    ```
 
-3. **Run the demo workflow** to observe the crawler, scheduler, and reporting outputs together:
+3. Chạy quy trình demo để quan sát đầu ra của crawler, bộ lập lịch và báo cáo cùng nhau:
 
    ```bash
    python demo.py
    ```
 
-4. **Integrate in your own project** by importing the relevant packages:
+4. Tích hợp vào dự án của bạn bằng cách import các gói liên quan:
 
-   - `crawler.KeywordCrawler` for keyword crawling with `CrawlerController` to adjust speed or pause/resume.
-   - `scheduler.ContentScheduler` for registering and executing planned posts.
-   - `reporting.ReportingPipeline` for generating aggregated reports.
+   - `crawler.KeywordCrawler` để thu thập từ khóa; dùng `CrawlerController` để điều chỉnh tốc độ hoặc tạm dừng/tiếp tục.
+   - `scheduler.ContentScheduler` để đăng ký và thực thi các bài viết đã lên kế hoạch.
+   - `reporting.ReportingPipeline` để tạo các báo cáo tổng hợp.
 
-Configuration defaults are stored in `config/settings.py`. Provide a JSON override at `config/settings.json` or set the `CKT_CONFIG` environment variable to point to a custom file.
+Giá trị cấu hình mặc định được lưu tại `config/settings.py`. Bạn có thể cung cấp tệp JSON ghi đè ở `config/settings.json` hoặc đặt biến môi trường `CKT_CONFIG` trỏ tới tệp tùy chỉnh.
 
-## Repository Structure
+## Cấu Trúc Kho Mã
 
 ```
-config/           # Trình tải cấu hình và giá trị mặc định
+config/           # Bộ tải cấu hình và giá trị mặc định
 crawler/          # Triển khai crawler từ khóa
 scheduler/        # Dịch vụ lập lịch nội dung
 reporting/        # Pipeline báo cáo lưu lượng
@@ -44,13 +44,14 @@ storage/          # Lớp lưu trữ SQLite
 tests/            # Bộ kiểm thử tự động
 ```
 
-## Running the Toolkit
+## Chạy Bộ Công Cụ
 
-The modules can be composed together for an end-to-end workflow:
+Các mô-đun có thể được kết hợp với nhau để tạo thành một quy trình đầu-cuối:
 
-1. Load settings and instantiate integrations.
-2. Use the crawler to collect keyword metrics and store them.
-3. Schedule upcoming content with the scheduler.
-4. Generate reports using the reporting pipeline.
+1. Nạp cấu hình và khởi tạo các tích hợp.
+2. Dùng crawler để thu thập số liệu từ khóa và lưu trữ chúng.
+3. Lên lịch nội dung sắp xuất bản bằng bộ lập lịch.
+4. Tạo báo cáo bằng pipeline báo cáo.
 
-The automated test suite demonstrates this workflow.
+Bộ kiểm thử tự động cũng minh họa quy trình này.
+
