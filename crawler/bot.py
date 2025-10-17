@@ -6,6 +6,9 @@ from collections import deque
 from dataclasses import dataclass
 from threading import Condition
 from typing import Deque, Iterable, List, Optional
+import logging
+
+logger = logging.getLogger(__name__)
 
 from integrations.search_console import SearchConsoleClient
 from storage.database import Database, KeywordRanking
@@ -79,10 +82,13 @@ class KeywordCrawler:
         results: List[CrawlResult] = []
         for keyword in keywords:
             self.controller.wait_for_slot()
-            metrics = self.client.fetch_keyword_metrics(keyword)
-            ranking = KeywordRanking(**metrics)
-            self.database.upsert_keyword_ranking(ranking)
-            results.append(CrawlResult(**metrics))
+            try:
+                metrics = self.client.fetch_keyword_metrics(keyword)
+                ranking = KeywordRanking(**metrics)
+                self.database.upsert_keyword_ranking(ranking)
+                results.append(CrawlResult(**metrics))
+            except Exception as exc:  # network or unexpected errors
+                logger.exception("Failed to fetch metrics for keyword '%s'", keyword)
         return results
 
 

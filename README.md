@@ -54,4 +54,24 @@ Các mô-đun có thể được kết hợp với nhau để tạo thành một
 4. Tạo báo cáo bằng pipeline báo cáo.
 
 Bộ kiểm thử tự động cũng minh họa quy trình này.
+## Tích hợp mới: Requests + BeautifulSoup + APScheduler + JSON
 
+- Crawler có pause/resume linh hoạt qua `crawler.bot.CrawlerController`.
+- Bổ sung mô-đun fetch HTML an toàn `crawler/fetcher.py` dùng Requests + BeautifulSoup (retry + backoff, try/except + logging).
+- Thêm `scheduler/job_scheduler.py` dựa trên APScheduler để chạy job crawl định kỳ, với `pause()` và `resume()` runtime.
+- Xuất dữ liệu JSON ở `reporting/export.py`:
+  - `export_keyword_rankings(db, "reporting/output/keyword_rankings.json")`
+  - `export_reports(db, "reporting/output/reports.json")`
+  Có thể chọn mảng JSON hoặc NDJSON (JSON theo dòng) phù hợp Looker Studio.
+
+### Cài đặt phụ thuộc
+
+```bash
+pip install requests beautifulsoup4 apscheduler
+```
+
+### Gợi ý vận hành
+
+- Dùng `JobScheduler` để lên lịch crawl theo phút/giây; khi cần bảo trì, gọi `pause()` rồi `resume()` để tiếp tục.
+- Bao các tác vụ mạng trong try/except và log lỗi để tránh crash.
+- JSON xuất sẵn trong `reporting/output/` để team SEO import Looker Studio.
