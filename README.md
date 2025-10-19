@@ -1,77 +1,85 @@
-# Bộ Công Cụ Theo Dõi Thứ Hạng Từ Khóa
+# Crawl Keyword Tracking
 
-Dự án này cung cấp một bộ công cụ tự chứa để:
+Crawl Keyword Tracking is a modular reference implementation for monitoring SEO keyword performance, managing editorial schedules, and consolidating traffic analytics. The code base is intentionally self-contained and ships with lightweight mocks for Google Search Console and GA4 so you can validate workflows without live credentials.
 
-- Thu thập (crawl) thứ hạng từ khóa và số liệu SEO với giới hạn tốc độ có thể cấu hình cùng khả năng tạm dừng/tiếp tục.
-- Lên lịch và theo dõi kế hoạch xuất bản nội dung.
-- Tổng hợp số liệu kiểu Search Console và GA4 thành các báo cáo lưu lượng.
-- Minh họa toàn bộ quy trình thông qua một script demo có thể chạy.
+## Key Capabilities
 
-Tất cả tích hợp được hiện thực bằng mock nhẹ, có tính xác định, cho phép kiểm thử cục bộ mà không cần thông tin xác thực bên ngoài. Lớp lưu trữ dựa trên SQLite dùng để theo dõi thứ hạng, lịch nội dung và các báo cáo được tạo.
+- Keyword crawler with rate limiting, pause/resume controls, and persistent storage.
+- Content scheduling service for newsroom-style editorial calendars.
+- Reporting pipeline that merges Search Console style query metrics with GA4 traffic data.
+- Export utilities that generate JSON or NDJSON files ready for Looker Studio and similar BI tools.
+- Demo script stitching every subsystem together and pytest coverage for core scenarios.
 
-## Bắt Đầu
+## Architecture Overview
 
-1. Cài đặt phụ thuộc (chỉ sử dụng thư viện chuẩn của Python).
-2. Chạy bộ kiểm thử tự động:
+The project is organised as independent Python packages that collaborate through clear interfaces:
+
+- `config` loads project settings at runtime from `config/settings.json` or environment overrides.
+- `crawler` contains the rate-limited `KeywordCrawler`, HTTP fetch helpers, and orchestration logic.
+- `integrations` exposes mock clients for Google services and credentials helpers.
+- `scheduler` provides editorial workflow automation (content queue + APScheduler jobs).
+- `storage` wraps SQLite for keyword rankings, content schedule, and aggregated reports.
+- `reporting` assembles analytics and exports structured data for downstream tools.
+
+Refer to `docs/API_REFERENCE.md` for module-level APIs and method signatures.
+
+## Quick Start
+
+1. Ensure Python 3.10+ is available. (The project uses the standard library plus a few pip packages.)
+2. Install dependencies:
+
+   ```bash
+   pip install requests beautifulsoup4 apscheduler pytest
+   ```
+
+3. Run tests to confirm the environment:
 
    ```bash
    pytest
    ```
 
-3. Chạy quy trình demo để quan sát đầu ra của crawler, bộ lập lịch và báo cáo cùng nhau:
+4. Execute the end-to-end demo:
 
    ```bash
    python demo.py
    ```
 
-4. Tích hợp vào dự án của bạn bằng cách import các gói liên quan:
+   The script crawls sample keywords, schedules content, generates traffic reports, and exports JSON artefacts in `reporting/output/`.
 
-   - `crawler.KeywordCrawler` để thu thập từ khóa; dùng `CrawlerController` để điều chỉnh tốc độ hoặc tạm dừng/tiếp tục.
-   - `scheduler.ContentScheduler` để đăng ký và thực thi các bài viết đã lên kế hoạch.
-   - `reporting.ReportingPipeline` để tạo các báo cáo tổng hợp.
+## Configuration
 
-Giá trị cấu hình mặc định được lưu tại `config/settings.py`. Bạn có thể cung cấp tệp JSON ghi đè ở `config/settings.json` hoặc đặt biến môi trường `CKT_CONFIG` trỏ tới tệp tùy chỉnh.
+- Default settings live in `config/settings.py`.
+- Provide a custom configuration file at `config/settings.json` or point the `CKT_CONFIG` environment variable at an alternate JSON file.
+- Supply `search_console.site_url`, `ga4.property_id`, and optional `crawler.rate_limit_per_minute` overrides as needed.
 
-## Cấu Trúc Kho Mã
+## Project Layout
 
 ```
-config/           # Bộ tải cấu hình và giá trị mặc định
-crawler/          # Triển khai crawler từ khóa
-scheduler/        # Dịch vụ lập lịch nội dung
-reporting/        # Pipeline báo cáo lưu lượng
-integrations/     # Tích hợp giả lập cho các API của Google
-storage/          # Lớp lưu trữ SQLite
-tests/            # Bộ kiểm thử tự động
+config/           # Settings definitions and loading helpers
+crawler/          # Keyword crawling logic and HTTP fetch utilities
+integrations/     # Mock Search Console, GA4, and Google auth helpers
+reporting/        # Analytics pipeline and JSON export tools
+scheduler/        # Editorial calendar + APScheduler job wrapper
+storage/          # SQLite persistence layer and domain models
+tests/            # Pytest suites covering crawler, scheduler, and reporting flows
+demo.py           # Orchestrated walkthrough of the full workflow
 ```
 
-## Chạy Bộ Công Cụ
+## Operational Notes
 
-Các mô-đun có thể được kết hợp với nhau để tạo thành một quy trình đầu-cuối:
+- Logging is configured in `demo.py`; adjust handlers as needed for production deployments.
+- The SQLite database defaults to in-memory storage. Pass a filesystem path to `storage.Database` in your application to persist data across runs.
+- APScheduler runs in-process via `scheduler.job_scheduler.JobScheduler`. In production, ensure the process stays alive and set an appropriate executor for concurrency needs.
+- Exports write UTF-8 encoded files to `reporting/output/`. Change destinations or formats by extending `reporting/export.py`.
 
-1. Nạp cấu hình và khởi tạo các tích hợp.
-2. Dùng crawler để thu thập số liệu từ khóa và lưu trữ chúng.
-3. Lên lịch nội dung sắp xuất bản bằng bộ lập lịch.
-4. Tạo báo cáo bằng pipeline báo cáo.
+## Testing
 
-Bộ kiểm thử tự động cũng minh họa quy trình này.
-## Tích hợp mới: Requests + BeautifulSoup + APScheduler + JSON
+- `pytest` validates keyword persistence, content scheduling transitions, and reporting summaries.
+- Extend `tests/` with integration tests when wiring real Search Console or GA4 APIs.
 
-- Crawler có pause/resume linh hoạt qua `crawler.bot.CrawlerController`.
-- Bổ sung mô-đun fetch HTML an toàn `crawler/fetcher.py` dùng Requests + BeautifulSoup (retry + backoff, try/except + logging).
-- Thêm `scheduler/job_scheduler.py` dựa trên APScheduler để chạy job crawl định kỳ, với `pause()` và `resume()` runtime.
-- Xuất dữ liệu JSON ở `reporting/export.py`:
-  - `export_keyword_rankings(db, "reporting/output/keyword_rankings.json")`
-  - `export_reports(db, "reporting/output/reports.json")`
-  Có thể chọn mảng JSON hoặc NDJSON (JSON theo dòng) phù hợp Looker Studio.
+## Further Reading
 
-### Cài đặt phụ thuộc
+- API details, request/response schemas, and integration patterns: `docs/API_REFERENCE.md`.
+- Deployment considerations for local, containerised, and cloud environments: `docs/DEPLOYMENT_GUIDE.md`.
 
-```bash
-pip install requests beautifulsoup4 apscheduler
-```
-
-### Gợi ý vận hành
-
-- Dùng `JobScheduler` để lên lịch crawl theo phút/giây; khi cần bảo trì, gọi `pause()` rồi `resume()` để tiếp tục.
-- Bao các tác vụ mạng trong try/except và log lỗi để tránh crash.
-- JSON xuất sẵn trong `reporting/output/` để team SEO import Looker Studio.
+Both documents are maintained alongside this README to provide comprehensive technical context.
